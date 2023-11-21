@@ -21,4 +21,5 @@ public partial class TodoDBContext : DbContext
         OnModelCreatingPartial(modelBuilder);
     }
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    public DbSet<ToDoAppMVC.ViewModels.TodoViewModel> TodoViewModel { get; set; } = default!;
 }

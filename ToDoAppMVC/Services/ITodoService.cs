@@ -11,4 +11,6 @@ public interface ITodoService
     Task<int> CreateTodo(CreateTodoViewModel model);
     
     Task<TodoViewModel> UpdateTodo(UpdateTodoViewModel model);
+    
+    Task DeleteTodo(int Id);
 }

@@ -78,4 +78,24 @@ public class TodoController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+    
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+        
+        var todo = await _todoService.GetTodo(id);
+    
+        return View(todo);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _todoService.DeleteTodo(id);
+
+        return RedirectToAction(nameof(Index));
+    }
 }

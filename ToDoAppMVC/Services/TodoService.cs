@@ -64,4 +64,12 @@ public class TodoService : ITodoService
 
         return _mapper.Map<TodoViewModel>(todo);
     }
+
+    public async Task DeleteTodo(int id)
+    {
+        var todo = new Todo { Id = id };
+
+        _context.Todos.Remove(todo);
+        await _context.SaveChangesAsync();
+    }
 }
