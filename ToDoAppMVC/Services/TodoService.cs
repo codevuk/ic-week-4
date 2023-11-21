@@ -23,4 +23,45 @@ public class TodoService : ITodoService
 
         return _mapper.Map<List<TodoViewModel>>(todos);
     }
+    
+    public async Task<TodoViewModel> GetTodo(int? id)
+    {
+        var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
+
+        return _mapper.Map<TodoViewModel>(todo);
+    }
+
+    public async Task<int> CreateTodo(CreateTodoViewModel model)
+    {
+        var todo = new Todo
+        {
+            Details = model.Details,
+            Completed = false,
+            CreatedAt = DateTime.Now
+        };
+
+        _context.Todos.Add(todo);
+        await _context.SaveChangesAsync();
+
+        return todo.Id;
+    }
+
+    public async Task<TodoViewModel> UpdateTodo(UpdateTodoViewModel model)
+    {
+        
+        var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == model.Id);
+
+        if (todo == null)
+        {
+            throw new ApplicationException();
+        }
+
+        todo.Details = model.Details;
+        todo.Completed = model.Completed;
+
+        _context.Todos.Update(todo);
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<TodoViewModel>(todo);
+    }
 }
