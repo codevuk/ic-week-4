@@ -9,8 +9,8 @@ public partial class TodoDBContext : DbContext
         : base(options)
     {
     }
-    
     public virtual DbSet<Todo> Todos { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,5 +21,4 @@ public partial class TodoDBContext : DbContext
         OnModelCreatingPartial(modelBuilder);
     }
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-    public DbSet<ToDoAppMVC.ViewModels.TodoViewModel> TodoViewModel { get; set; } = default!;
 }

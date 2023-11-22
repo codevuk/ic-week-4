@@ -27,7 +27,7 @@ public class TodoService : ITodoService
     public async Task<TodoViewModel> GetTodo(int? id)
     {
         var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
-
+        
         return _mapper.Map<TodoViewModel>(todo);
     }
 
