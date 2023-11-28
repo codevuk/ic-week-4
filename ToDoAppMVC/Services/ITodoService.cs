@@ -4,13 +4,13 @@ namespace ToDoAppMVC.Services;
 
 public interface ITodoService
 {
-    Task<List<TodoViewModel>> GetTodos();
+    Task<List<TodoViewModel>> GetTodos(int userId);
 
-    Task<TodoViewModel> GetTodo(int? id);
+    Task<TodoViewModel?> GetTodo(int id, int userId);
     
-    Task<int> CreateTodo(CreateTodoViewModel model);
+    Task<int> CreateTodo(CreateTodoViewModel model, int userId);
     
-    Task<TodoViewModel> UpdateTodo(UpdateTodoViewModel model);
+    Task<TodoViewModel> UpdateTodo(UpdateTodoViewModel model, int userId);
     
-    Task DeleteTodo(int Id);
+    Task DeleteTodo(int id, int userId);
 }

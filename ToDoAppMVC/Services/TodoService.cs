@@ -17,27 +17,31 @@ public class TodoService : ITodoService
         _mapper = mapper;
     }
     
-    public async Task<List<TodoViewModel>> GetTodos()
+    public async Task<List<TodoViewModel>> GetTodos(int userId)
     {
-        var todos = await _context.Todos.ToListAsync();
+        var todos = await _context.Todos
+            .Where(todo => todo.UserId == userId)
+            .ToListAsync();
 
         return _mapper.Map<List<TodoViewModel>>(todos);
     }
-    
-    public async Task<TodoViewModel> GetTodo(int? id)
+
+    public async Task<TodoViewModel?> GetTodo(int id, int userId)
     {
-        var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == id);
-        
-        return _mapper.Map<TodoViewModel>(todo);
+        var todo = await _context.Todos
+            .FirstOrDefaultAsync(todo => todo.Id == id && todo.UserId == userId);
+
+        return todo == null ? null : _mapper.Map<TodoViewModel>(todo);
     }
 
-    public async Task<int> CreateTodo(CreateTodoViewModel model)
+    public async Task<int> CreateTodo(CreateTodoViewModel model, int userId)
     {
         var todo = new Todo
         {
             Details = model.Details,
             Completed = false,
-            CreatedAt = DateTime.Now
+            CreatedAt = DateTime.Now,
+            UserId = userId
         };
 
         _context.Todos.Add(todo);
@@ -46,10 +50,11 @@ public class TodoService : ITodoService
         return todo.Id;
     }
 
-    public async Task<TodoViewModel> UpdateTodo(UpdateTodoViewModel model)
+    public async Task<TodoViewModel> UpdateTodo(UpdateTodoViewModel model, int userId)
     {
         
-        var todo = await _context.Todos.FirstOrDefaultAsync(x => x.Id == model.Id);
+        var todo = await _context.Todos
+            .FirstOrDefaultAsync(t => t.Id == model.Id && t.UserId == userId);
 
         if (todo == null)
         {
@@ -65,8 +70,15 @@ public class TodoService : ITodoService
         return _mapper.Map<TodoViewModel>(todo);
     }
 
-    public async Task DeleteTodo(int id)
+    public async Task DeleteTodo(int id, int userId)
     {
+        var found = await GetTodo(id, userId);
+
+        if (found == null)
+        {
+            return;
+        }
+        
         var todo = new Todo { Id = id };
 
         _context.Todos.Remove(todo);

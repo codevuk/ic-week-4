@@ -24,7 +24,7 @@ public class TodoApiController : BaseAuthController
     [Produces(typeof(IEnumerable<TodoViewModel>))]
     public async Task<IActionResult> Get([FromQuery]bool? isCompleted)
     {
-        var todos = await _todoService.GetTodos();
+        var todos = await _todoService.GetTodos(GetUserId());
 
         if (isCompleted == null)
         {
@@ -43,9 +43,9 @@ public class TodoApiController : BaseAuthController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces(typeof(TodoViewModel))]
-    public async Task<IActionResult> GetSingle(int? id)
+    public async Task<IActionResult> GetSingle(int id)
     {
-        var todo = await _todoService.GetTodo(id);
+        var todo = await _todoService.GetTodo(id, GetUserId());
 
         if (todo == null)
         {
@@ -64,7 +64,7 @@ public class TodoApiController : BaseAuthController
             return BadRequest(ModelState);
         }
         
-        var id = await _todoService.CreateTodo(model);
+        var id = await _todoService.CreateTodo(model, GetUserId());
 
         return Ok(id);
     }
