@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ToDoAppMVC.Services;
@@ -6,8 +7,9 @@ using ToDoAppMVC.ViewModels;
 namespace ToDoAppMVC.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
-public class TodoApiController : ControllerBase
+public class TodoApiController : BaseAuthController
 {
     private readonly ITodoService _todoService;
     
@@ -15,11 +17,11 @@ public class TodoApiController : ControllerBase
     {
         _todoService = todoService;
     }
-
-    // HTTP POST => localhost:5050/api/todoapi
     
     [HttpGet]
-    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Produces(typeof(IEnumerable<TodoViewModel>))]
     public async Task<IActionResult> Get([FromQuery]bool? isCompleted)
     {
         var todos = await _todoService.GetTodos();
@@ -39,6 +41,7 @@ public class TodoApiController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Produces(typeof(TodoViewModel))]
     public async Task<IActionResult> GetSingle(int? id)
     {
@@ -53,6 +56,7 @@ public class TodoApiController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateTodo([FromBody]CreateTodoViewModel model)
     {
         if (!ModelState.IsValid)

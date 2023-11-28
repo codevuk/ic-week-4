@@ -54,6 +54,8 @@ public class AuthController : ControllerBase
 
         var user = await _context.Users
             .FirstOrDefaultAsync(user => user.Username == model.Username && user.Password == model.Password);
+        
+        // Get the roles aswell
 
         if (user == null)
         {
@@ -71,13 +73,16 @@ public class AuthController : ControllerBase
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier,user.Username, ClaimsIdentity.DefaultNameClaimType),
+            new Claim(ClaimTypes.NameIdentifier,user.Username),
+            new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
         };
+
         var token = new JwtSecurityToken(_config["Jwt:Issuer"],
             _config["Jwt:Audience"],
             claims,
             expires: DateTime.Now.AddDays(30),
             signingCredentials: credentials);
+            
         
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
